@@ -4,8 +4,8 @@ import com.example.demo_kot.util.tablegenerator.type.DataType
 import com.example.demo_kot.util.tablegenerator.type.StorageType
 
 @MustBeDocumented
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.PROPERTY)
 annotation class OutColumn(
         val dataType: DataType,
         val storageTypes: Array<StorageType> = []

@@ -5,8 +5,8 @@ import com.example.demo_kot.util.tablegenerator.type.StorageType
 
 @MustBeDocumented
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.PROPERTY)
 annotation class OutColumnTimestamp(
-        val dataType: DataType = DataType.DATETIME,
-        val storageTypes: Array<StorageType> = []
+    val dataType: DataType = DataType.TIMESTAMP,
+    val storageTypes: Array<StorageType> = []
 )

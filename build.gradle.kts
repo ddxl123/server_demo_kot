@@ -43,7 +43,7 @@ dependencies {
     implementation("mysql:mysql-connector-java")
     // lombok getter/setter 生成
 //    implementation("org.projectlombok:lombok")
-    
+
     // mybatis-plus
     implementation("com.baomidou:mybatis-plus-boot-starter:3.4.3.1")
     // jwt

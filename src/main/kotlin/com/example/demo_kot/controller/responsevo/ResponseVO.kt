@@ -9,9 +9,9 @@ import com.example.demo_kot.util.logger
  * @param data 响应的数据。
  */
 data class ResponseVO<T>(
-        val code: Int,
-        val message: String,
-        val data: T?
+    val code: Int,
+    val message: String,
+    val data: T?
 ) {
     /**
      * 是否在响应的同时输出日志。
