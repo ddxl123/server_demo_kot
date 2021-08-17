@@ -4,7 +4,7 @@ import com.auth0.jwt.exceptions.JWTCreationException
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException
-import com.example.demo_kot.controller.responsevo.ResponseVO
+import com.example.demo_kot.controllerhandler.ResponseVO
 import com.example.demo_kot.exception.ControllerSelfThrowException
 import com.example.demo_kot.exception.RequestInterceptorSelfThrowException
 import org.springframework.dao.DataAccessException
