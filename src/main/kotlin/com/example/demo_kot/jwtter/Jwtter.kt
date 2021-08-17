@@ -13,13 +13,15 @@ class Jwtter {
         /**
          * 验证 token。
          */
-        fun verifyToken(token: String?): Tokener {
+        fun verifyToken(token: String): Tokener {
             val decodedJWT = JWT
-                    .require(Algorithm.HMAC256(JwtConstant.JWT_SECRET))
-                    .build()
-                    .verify(token)
+                .require(Algorithm.HMAC256(JwtConstant.JWT_SECRET))
+                .build()
+                .verify(token)
             // 验证成功，写入 claims
-            return Tokener(null, JwtClaims().apply { user_id = decodedJWT.getClaim(user_id.fieldName).asString() })
+            return Tokener(
+                token,
+                JwtClaims().apply { user_id = decodedJWT.getClaim(user_id.fieldName).asLong() })
         }
 
         /**
@@ -27,13 +29,22 @@ class Jwtter {
          */
         fun generateToken(jwtClaims: JwtClaims): Tokener {
             return Tokener(
-                    JWT.create()
-                            .withAudience(jwtClaims.user_id.fieldName) // 签发对象
-                            .withIssuedAt(Date.from(Instant.now())) // 发行时间
-                            .withExpiresAt(Date.from(Instant.now().plus(Duration.ofDays(JwtConstant.TOKEN_EXPIRE)))) // 过期时间
-                            .withClaim(jwtClaims.user_id.fieldName, jwtClaims.user_id) // 载荷，必须与 JwtClaims 类对应
-                            .sign(Algorithm.HMAC256(JwtConstant.JWT_SECRET)),
-                    jwtClaims
+                JWT.create()
+                    .withAudience(jwtClaims.user_id.fieldName) // 签发对象
+                    .withIssuedAt(Date.from(Instant.now())) // 发行时间
+                    // 过期时间
+                    .withExpiresAt(
+                        Date.from(
+                            Instant.now().plus(Duration.ofDays(JwtConstant.TOKEN_EXPIRE))
+                        )
+                    )
+                    // 载荷，必须与 JwtClaims 类对应
+                    .withClaim(
+                        jwtClaims.user_id.fieldName,
+                        jwtClaims.user_id
+                    )
+                    .sign(Algorithm.HMAC256(JwtConstant.JWT_SECRET)),
+                jwtClaims
             )
         }
     }

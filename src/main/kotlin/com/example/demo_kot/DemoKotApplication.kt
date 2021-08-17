@@ -1,12 +1,13 @@
 package com.example.demo_kot
 
+import org.mybatis.spring.annotation.MapperScan
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
 //@EnableOpenApi
 //@EnableWebSecurity
-//@MapperScan(basePackages = [PackageNameConstant.MAPPER_PACKAGE])
+@MapperScan("com.example.demo_kot.mapper")
 class DemoKotApplication
 
 fun main(args: Array<String>) {

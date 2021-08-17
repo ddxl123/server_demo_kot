@@ -8,11 +8,11 @@ import java.math.BigInteger
 
 @OutTable
 data class PnFragment(
-    @OutColumnAIID val userAiid: Long?,
-    @OutColumnAIID val ruleAiid: Long?,
-    @OutColumn(dataType = DataType.CHAR_20) val title: String?,
-    @OutColumn(dataType = DataType.CHAR_50) val easyPosition: String?,
-    override val id: Long?,
-    override val createdAt: Long?,
-    override val updatedAt: Long?
+    @OutColumnAIID val userAiid: Long? = null,
+    @OutColumnAIID val ruleAiid: Long? = null,
+    @OutColumn(dataType = DataType.CHAR_20) val title: String? = null,
+    @OutColumn(dataType = DataType.CHAR_50) val easyPosition: String? = null,
+    override val id: Long? = null,
+    override val createdAt: Long? = null,
+    override val updatedAt: Long? = null
 ) : BaseEntity(id, createdAt, updatedAt)

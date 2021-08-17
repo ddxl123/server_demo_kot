@@ -6,9 +6,9 @@ import com.example.demo_kot.util.tablegenerator.type.DataType
 
 @OutTable
 data class EmailVerify(
-    @OutColumn(dataType = DataType.CHAR_50) val email: String?,
-    @OutColumn(dataType = DataType.INT) val code: Int?,
-    override val id: Long?,
-    override val createdAt: Long?,
-    override val updatedAt: Long?,
+    @OutColumn(dataType = DataType.CHAR_50) val email: String? = null,
+    @OutColumn(dataType = DataType.INT) val code: Int? = null,
+    override val id: Long? = null,
+    override val createdAt: Long? = null,
+    override val updatedAt: Long? = null,
 ) : BaseEntity(id, createdAt, updatedAt)

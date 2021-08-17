@@ -10,18 +10,17 @@ import java.util.regex.Pattern
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
-/**
- * @author 10338
- */
 @Component
 class RequestInterceptor : HandlerInterceptor {
 
-    private val c4010101: Int = 4010101
 
     val passContains: Regex = Regex("swagger|v3")
 
-    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+    override fun preHandle(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any
+    ): Boolean {
         val pattern = Pattern.compile("/\\w+")
         val matcher = pattern.matcher(request.requestURL)
 

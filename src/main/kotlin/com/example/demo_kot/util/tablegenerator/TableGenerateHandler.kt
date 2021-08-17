@@ -78,12 +78,12 @@ object TableGenerateHelper {
 class TableGenerateHandler(
     args: Array<String>,
     applicationClass: Class<*>,
-    val packageName: String,
-    var isDropAllIfExist: Boolean
+    private val packageName: String,
+    private val isDropAllIfExist: Boolean
 ) {
 
-    private lateinit var jdbcTemplate: JdbcTemplate
-    private lateinit var context: ConfigurableApplicationContext
+    private val jdbcTemplate: JdbcTemplate
+    private val context: ConfigurableApplicationContext
 
 
     init {
@@ -101,7 +101,7 @@ class TableGenerateHandler(
 
         if (isDropAllIfExist) {
             println("正在删除全部表...")
-            val dbUrl = jdbcTemplate.dataSource!!.connection.metaData.url
+            val dbUrl = (jdbcTemplate::getDataSource)()!!.connection.metaData.url
             val dbName = dbUrl.split("/")[3]
             val tableNames: List<Map<String, Any>> =
                 jdbcTemplate.queryForList("select table_name from information_schema.tables where table_schema='$dbName'")
@@ -131,7 +131,7 @@ class TableGenerateHandler(
             // 用于读取类信息
             val reader: MetadataReader = metadataReaderFactory.getMetadataReader(resource)
             // 扫描到的 class
-            val classname = reader.classMetadata.className;
+            val classname = reader.classMetadata.className
             // 将扫描出的类转化为实体类
             val kClass = Class.forName(classname).kotlin
 
@@ -141,7 +141,7 @@ class TableGenerateHandler(
                 val tableName: String = Helper.toUnderLineCase(kClass.simpleName!!)
 
                 // 字段名及属性 —— column 属性
-                var columnSql: String = ""
+                var columnSql = ""
 
                 // 获取全部可识别的属性，包含当前类、直接父类、间接父类
                 val noSortAllProperties = mutableListOf<KProperty1<out Any, *>>()
@@ -152,8 +152,8 @@ class TableGenerateHandler(
 
                 // 进行排序
                 val allProperties = mutableListOf<KProperty1<out Any, *>>()
-                val idPro = mutableListOf<KProperty1<out Any, *>>();
-                val xxIdPro = mutableListOf<KProperty1<out Any, *>>();
+                val idPro = mutableListOf<KProperty1<out Any, *>>()
+                val xxIdPro = mutableListOf<KProperty1<out Any, *>>()
                 val timeAtPro = mutableListOf<KProperty1<out Any, *>>()
                 val otherPro = mutableListOf<KProperty1<out Any, *>>()
                 noSortAllProperties.forEach { p ->
@@ -183,14 +183,15 @@ class TableGenerateHandler(
                             columnSql += "${Helper.toUnderLineCase(fieldName)} "
 
                             // 提取 dataType 和 storageType 并进行包装
-                            val typeWrap = TypeWrap()
-                            typeWrap.dataType = TableGenerateHelper.getDataType(proAn)
-                            typeWrap.storageTypes = TableGenerateHelper.getStorageType(proAn)
+                            val typeWrap = TypeWrap(
+                                TableGenerateHelper.getDataType(proAn),
+                                TableGenerateHelper.getStorageType(proAn)
+                            )
 
                             checkType(pro.javaField!!, typeWrap)
 
                             columnSql += "${typeWrap.dataType.dataTypeName} "
-                            typeWrap.storageTypes.forEach { it ->
+                            typeWrap.storageTypes.forEach {
                                 columnSql += "${it.storageTypeName} "
                             }
                             columnSql += ", \n"
@@ -200,7 +201,6 @@ class TableGenerateHandler(
                 columnSql = columnSql.removeSuffix(", \n")
 
                 val singleTableSql = "CREATE TABLE $tableName (\n${columnSql}\n);"
-                println(singleTableSql)
                 jdbcTemplate.execute(singleTableSql)
                 println(singleTableSql)
             }
@@ -211,7 +211,7 @@ class TableGenerateHandler(
     }
 
     /**
-     * 检查 [数据库字段类型] 是否与 [java 字段类型] 对应。
+     * 检查 数据库字段类型 是否与 [java 字段类型] 对应。
      */
     private fun checkType(field: Field, typeWrap: TypeWrap) {
         val enumName: String = typeWrap.dataType.name
