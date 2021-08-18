@@ -4,7 +4,7 @@ import com.auth0.jwt.exceptions.JWTCreationException
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException
-import com.example.demo_kot.controllerhandler.ResponseVO
+import com.example.demo_kot.controllervo.ResponseVO
 import com.example.demo_kot.exception.ControllerSelfThrowException
 import com.example.demo_kot.exception.RequestInterceptorSelfThrowException
 import org.springframework.dao.DataAccessException
@@ -23,6 +23,8 @@ class ResponseExceptionInterceptor {
         const val C3010401 = 3010401
         const val C3010501 = 3010501
         const val C3010502 = 3010502
+        const val C3010503 = 3010503
+        const val C3010504 = 3010504
         const val C3010602 = 3010602
         const val C3010701 = 3010701
         const val C3010801 = 3010801
@@ -117,21 +119,38 @@ class ResponseExceptionInterceptor {
 
     /**
      * jwt 异常。包含 token 生成、验证异常。
+     *
+     * 登陆的异常也拦截。
      */
     @ExceptionHandler(JWTCreationException::class, JWTVerificationException::class)
     fun baseJwtException(jwtException: Exception): ResponseVO<Unit> {
-        return if (jwtException is TokenExpiredException) {
-            // 无需输出日志
-            ResponseVO<Unit>(C3010501, "用户过期，请重新登陆！", null)
-        } else {
-            setResponseException(
-                C3010502, """
+        when (jwtException) {
+            is JWTVerificationException ->
+                return if (jwtException is TokenExpiredException) {
+                    // 无需输出日志
+                    ResponseVO<Unit>(C3010501, "用户过期，请重新登陆！", null)
+                } else {
+                    ResponseVO<Unit>(
+                        C3010502,
+                        "用户异常，请重新登陆！",
+                        null
+                    ).withErrorLog("用户 token 验证异常！", jwtException)
+                }
+            is JWTCreationException ->
+                return ResponseVO<Unit>(
+                    C3010503,
+                    "用户异常，请重新登陆！",
+                    null
+                ).withErrorLog("用户验证 refresh token 时生成 token 异常！", jwtException)
+            else ->
+                return setResponseException(
+                    C3010504, """s
                 jwt 发生异常，可能的原因如下：
                     1. jwt 的生成发生异常。
                     2. jwt 的验证发生异常。例如，Token 验证不通过！用户发出了错误 Token ，可能存在应用数据被篡改的操作！
                     2. 未知异常！
             """.trimIndent(), jwtException
-            )
+                )
         }
     }
 

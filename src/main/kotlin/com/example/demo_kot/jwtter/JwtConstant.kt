@@ -12,13 +12,4 @@ object JwtConstant {
      */
     const val TOKEN_EXPIRE = 7L
 
-    /**
-     * 需要通过 jwt 认证的相对 URL。
-     */
-    const val JWT_URL = "/jwt"
-
-    /**
-     * 不需要通过 jwt 认证的相对 URL。
-     */
-    const val NO_JWT_URL = "/no_jwt"
 }

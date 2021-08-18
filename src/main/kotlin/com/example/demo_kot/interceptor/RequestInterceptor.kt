@@ -1,7 +1,7 @@
 package com.example.demo_kot.interceptor
 
+import com.example.demo_kot.controllerhandler.PathConstant
 import com.example.demo_kot.exception.RequestInterceptorSelfThrowException
-import com.example.demo_kot.jwtter.JwtConstant
 import com.example.demo_kot.jwtter.Jwtter
 import com.example.demo_kot.util.logger
 import org.springframework.stereotype.Component
@@ -35,8 +35,8 @@ class RequestInterceptor : HandlerInterceptor {
             }
             // 若 "/yyy" 为不需要 jwt 认证
             when (group) {
-                JwtConstant.NO_JWT_URL -> return true
-                JwtConstant.JWT_URL -> {
+                PathConstant.NO_JWT -> return true
+                PathConstant.JWT -> {
                     // 获取请求头中的 token
                     val token: String = request.getHeader("authorization").removePrefix("bearer ")
                     // 验证 token

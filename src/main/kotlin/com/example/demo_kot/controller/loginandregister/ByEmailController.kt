@@ -2,7 +2,8 @@ package com.example.demo_kot.controller.loginandregister
 
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateWrapper
 import com.example.demo_kot.controllerhandler.PathConstant
-import com.example.demo_kot.controllerhandler.ResponseVO
+import com.example.demo_kot.controllervo.ResponseVO
+import com.example.demo_kot.controllervo.loginandregister.*
 import com.example.demo_kot.entity.EmailVerify
 import com.example.demo_kot.entity.User
 import com.example.demo_kot.exception.ControllerSelfThrowException
@@ -20,9 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 @RestController
 @RequestMapping(
@@ -36,23 +34,6 @@ class ByEmailController(
     val userServiceImpl: UserServiceImpl
 ) {
 
-
-    object CodeSendEmail {
-        const val C1_01_01_01 = 1_01_01_01
-        const val C1_01_01_02 = 1_01_01_02
-
-        const val C2_01_01_01 = 2_01_01_01
-
-    }
-
-    data class SendEmailRequestVO(
-        /**
-         * 邮箱
-         */
-        @field:Email(message = "${CodeSendEmail.C1_01_01_01},邮箱格式不正确!,E")
-        @field:NotBlank(message = "${CodeSendEmail.C1_01_01_02},邮箱不能为空!,E")
-        val email: String = "S",
-    )
 
     @PostMapping(path = [PathConstant.LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL])
     fun sendEmail(@RequestBody @Validated requestVO: SendEmailRequestVO): ResponseVO<Unit> {
@@ -82,44 +63,8 @@ class ByEmailController(
     }
 
 
-    object CodeVerifyEmail {
-        const val C1_01_02_01 = 1_01_02_01
-        const val C1_01_02_02 = 1_01_02_02
-        const val C1_01_02_03 = 1_01_02_03
-
-        const val C2_01_02_01 = 2_01_02_01
-        const val C2_01_02_02 = 2_01_02_02
-        const val C2_01_02_03 = 2_01_02_03
-        const val C2_01_02_04 = 2_01_02_04
-
-    }
-
-    data class VerifyEmailRequestVO(
-        /**
-         * 邮箱
-         */
-        @field:Email(message = "${CodeVerifyEmail.C1_01_02_01},邮箱格式不正确!,E")
-        @field:NotBlank(message = "${CodeVerifyEmail.C1_01_02_02},邮箱不能为空!,E")
-        var email: String = "S",
-
-        /**
-         * 邮箱验证码
-         */
-        @field:NotNull(message = "${CodeVerifyEmail.C1_01_02_03},验证码不能为空,E")
-        val code: Int = 0
-    )
-
-    data class VerifyEmailResponseVO(
-        val userId: Long?,
-        val username: String?,
-        val email: String?,
-        val age: Int?,
-        val token: String?
-    )
-
     @PostMapping(value = [PathConstant.LONGIN_AND_REGISTER_BY_EMAIL_VERIFY_EMAIL])
     fun verifyEmail(@RequestBody @Validated requestVO: VerifyEmailRequestVO): ResponseVO<VerifyEmailResponseVO> {
-        println(requestVO)
         // 查找数据库是否存在该邮箱以及相匹配的验证码。
         val isExists = emailVerifyServiceImpl.ktQuery()
             .allEq(
@@ -156,7 +101,7 @@ class ByEmailController(
 
                     return ResponseVO(
                         CodeVerifyEmail.C2_01_02_01, "邮箱注册成功！",
-                        newUser.run { VerifyEmailResponseVO(id, username, email, age, token) }
+                        newUser.run { VerifyEmailResponseVO(id, username) }
                     )
                 }
 
@@ -171,7 +116,7 @@ class ByEmailController(
                         CodeVerifyEmail.C2_01_02_02,
                         "邮箱登陆成功！",
                         userList.first()
-                            .run { VerifyEmailResponseVO(id, username, email, age, token) })
+                            .run { VerifyEmailResponseVO(id, username) })
                 }
 
                 // 存在多个该邮箱用户
