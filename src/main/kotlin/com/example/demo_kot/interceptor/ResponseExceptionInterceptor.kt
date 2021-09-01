@@ -123,7 +123,7 @@ class ResponseExceptionInterceptor {
      * 登陆的异常也拦截。
      */
     @ExceptionHandler(JWTCreationException::class, JWTVerificationException::class)
-    fun baseJwtException(jwtException: Exception): ResponseVO<Unit> {
+    fun jwtException(jwtException: Exception): ResponseVO<Unit> {
         when (jwtException) {
             is JWTVerificationException ->
                 return if (jwtException is TokenExpiredException) {

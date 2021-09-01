@@ -1,9 +1,13 @@
 package com.example.demo_kot.controller.loginandregister
 
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateWrapper
+import com.example.demo_kot.controllercode.loginandregister.CSendEmail
+import com.example.demo_kot.controllercode.loginandregister.CVerifyEmail
 import com.example.demo_kot.controllerhandler.PathConstant
 import com.example.demo_kot.controllervo.ResponseVO
-import com.example.demo_kot.controllervo.loginandregister.*
+import com.example.demo_kot.controllervo.loginandregister.SendEmailRequestVO
+import com.example.demo_kot.controllervo.loginandregister.VerifyEmailRequestVO
+import com.example.demo_kot.controllervo.loginandregister.VerifyEmailResponseVO
 import com.example.demo_kot.entity.EmailVerify
 import com.example.demo_kot.entity.User
 import com.example.demo_kot.exception.ControllerSelfThrowException
@@ -59,7 +63,7 @@ class ByEmailController(
         (mailMessage::setText)("验证码在标题上")
         javaMailSender.send(mailMessage)
 
-        return ResponseVO(CodeSendEmail.C2_01_01_01, "邮箱已发送, 请注意查收!", null)
+        return ResponseVO(CSendEmail.C2_01_01_01, "邮箱已发送, 请注意查收!", null)
     }
 
 
@@ -100,7 +104,7 @@ class ByEmailController(
                         Jwtter.generateToken(JwtClaims().apply { user_id = newUser.id!! }).token
 
                     return ResponseVO(
-                        CodeVerifyEmail.C2_01_02_01, "邮箱注册成功！",
+                        CVerifyEmail.C2_01_02_01, "邮箱注册成功！",
                         newUser.run { VerifyEmailResponseVO(id, username) }
                     )
                 }
@@ -113,7 +117,7 @@ class ByEmailController(
                             user_id = userList.first().id!!
                         }).token
                     return ResponseVO(
-                        CodeVerifyEmail.C2_01_02_02,
+                        CVerifyEmail.C2_01_02_02,
                         "邮箱登陆成功！",
                         userList.first()
                             .run { VerifyEmailResponseVO(id, username) })
@@ -121,14 +125,14 @@ class ByEmailController(
 
                 // 存在多个该邮箱用户
                 else -> {
-                    return ResponseVO(CodeVerifyEmail.C2_01_02_03, "邮箱重复异常，请联系管理员！", null)
+                    return ResponseVO(CVerifyEmail.C2_01_02_03, "邮箱重复异常，请联系管理员！", null)
                         .withErrorLog("数据库存在多个相同邮箱：${requestVO.email}", null)
                 }
             }
         }
         // 验证码不正确
         else {
-            return ResponseVO(CodeVerifyEmail.C2_01_02_04, "验证码不正确！", null)
+            return ResponseVO(CVerifyEmail.C2_01_02_04, "验证码不正确！", null)
         }
     }
 }

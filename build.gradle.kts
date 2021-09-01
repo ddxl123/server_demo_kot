@@ -38,6 +38,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-devtools")
     // 授权与认证，但只使用了其中的加密模块
 //    implementation("org.springframework.boot:spring-boot-starter-security")
+    // redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // mysql 连接器
     implementation("mysql:mysql-connector-java")

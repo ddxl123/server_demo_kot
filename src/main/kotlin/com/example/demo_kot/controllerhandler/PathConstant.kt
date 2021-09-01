@@ -16,4 +16,6 @@ object PathConstant {
 
     const val LONGIN_AND_REGISTER_BY_EMAIL_VERIFY_EMAIL =
         "$NO_JWT/login_and_register_by_email/verify_email"
+
+    const val VERIFY_TOKEN = "$NO_JWT/verify_token";
 }

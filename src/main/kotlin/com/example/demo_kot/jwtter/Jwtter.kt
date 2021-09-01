@@ -2,6 +2,7 @@ package com.example.demo_kot.jwtter
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.example.demo_kot.interceptor.ResponseExceptionInterceptor
 import com.example.demo_kot.util.fieldName
 import java.time.Duration
 import java.time.Instant
@@ -12,8 +13,13 @@ class Jwtter {
 
         /**
          * 验证 token。
+         *
+         * 发生异常会直接抛给 [ResponseExceptionInterceptor.jwtException] 处理。
+         *
+         * @return 验证成功则会直接返回传入的 token 信息。
          */
         fun verifyToken(token: String): Tokener {
+
             val decodedJWT = JWT
                 .require(Algorithm.HMAC256(JwtConstant.JWT_SECRET))
                 .build()
@@ -25,7 +31,23 @@ class Jwtter {
         }
 
         /**
+         * 验证并刷新 token（如果验证成功）。
+         *
+         * 发生异常会直接抛给 [ResponseExceptionInterceptor.jwtException] 处理。
+         *
+         * @return 验证成功则会直接返回刷新后的 token 信息。
+         */
+        fun verifyAndRefreshToken(token: String): Tokener {
+            val oldTokener = verifyToken(token)
+            return generateToken(JwtClaims().apply { user_id = oldTokener.jwtClaims.user_id })
+        }
+
+        /**
          * 生成 token
+         *
+         * 发生异常会直接抛给 [ResponseExceptionInterceptor.jwtException] 处理。
+         *
+         * @return 生成成功则会直接返回生成的 token 信息。
          */
         fun generateToken(jwtClaims: JwtClaims): Tokener {
             return Tokener(
