@@ -1,5 +1,6 @@
 package com.example.demo_kot.config
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import springfox.documentation.builders.ApiInfoBuilder
@@ -13,23 +14,30 @@ import springfox.documentation.spring.web.plugins.Docket
  */
 @Configuration
 class SpringFoxConfig {
+    @Value("\${server.address}")
+    lateinit var address: String
+
+    @Value("\${server.port}")
+    lateinit var port: String
+
+
     @Bean
     fun createRestApi(): Docket {
-        println("Api 接口文档可以访问网址: http://localhost:8080/swagger-ui/")
+        println("Api 接口文档可以访问网址: http://$address:$port/swagger-ui/")
         return Docket(DocumentationType.OAS_30)
-                .enable(true)
-                .apiInfo(apiInfo())
-                .select()
-                .build()
+            .enable(true)
+            .apiInfo(apiInfo())
+            .select()
+            .build()
     }
 
     @Bean
     fun apiInfo(): ApiInfo {
         return ApiInfoBuilder()
-                .title("RESTful APIs")
-                .description("无描述")
-                .contact(Contact("联系邮箱: 1033839760@qq.com", "", "1033839760@qq.com"))
-                .version("1.0")
-                .build()
+            .title("RESTful APIs")
+            .description("无描述")
+            .contact(Contact("联系邮箱: 1033839760@qq.com", "", "1033839760@qq.com"))
+            .version("1.0")
+            .build()
     }
 }
